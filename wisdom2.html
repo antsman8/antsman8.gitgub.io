@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <style>
+        body {
+        text-align: center;
+        font-family: Arial, Helvetica, sans-serif;
+        }
+
+        div {
+        width: 20%;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        }
+
+        button {
+        width: 100%;
+        margin: 10px 0px 5px 0px;
+        }
+    </style>
+    <script
+    src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"
+    type="application/javascript"
+    ></script>
+  
+    <script>
+        const WisdomContractAddress = "0xf8e81D47203A594245E36C48e151709F0C19fBe8";
+        const WisdomContractABI = [
+	      {
+		    "inputs": [
+			  {
+				"internalType": "uint256",
+				"name": "answer",
+				"type": "uint256"
+			  }
+		    ],
+		    "name": "getWisdom",
+		    "outputs": [
+			  {
+				"internalType": "string",
+				"name": "_wisdom",
+				"type": "string"
+			  }
+		    ],
+		    "stateMutability": "pure",
+		    "type": "function"
+      	}
+        ]
+
+        let WisdomContract;
+        let signer;
+        const provider = new ethers.providers.Web3Provider(window.ethereum, "goerli");
+        provider.send("eth_requestAccounts", []).then(() => {
+        provider.listAccounts().then((accounts) => {
+        signer = provider.getSigner(accounts[0]);
+        WisdomContract = new ethers.Contract(
+        WisdomContractAddress,
+        WisdomContractABI,
+        signer
+        );
+        });
+        });
+        async function getWisdom() {
+            const getWisdomPromise = WisdomContract.getWisdom();
+            const wisdom = await getWisdomPromise;
+            console.log(wisdom);
+        }
+
+    </script>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Word of Wisdom</title>
+  </head>
+  <body>
+    <div>
+        <h1>Word of Wisdom</h1>
+        <p>click and realize</p>
+        <p>two + 2:</p>
+        <label for="answer">Input answer:</label> <br />
+        <input type="text" id="answer" />
+        <button onclick="getWisdom()">Get wisdom</button>
+    </div>
+  </body>
+</html>
